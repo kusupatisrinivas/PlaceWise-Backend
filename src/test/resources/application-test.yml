@@ -1,0 +1,16 @@
+spring:
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:placewise-tests;MODE=MySQL;DB_CLOSE_DELAY=-1
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+app:
+  jwt-secret: test-only-secret-that-is-longer-than-thirty-two-bytes
+  admin-password: Admin@123
+  seed-demo: false
+logging:
+  level:
+    root: WARN
