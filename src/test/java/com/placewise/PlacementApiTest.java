@@ -87,6 +87,26 @@ class PlacementApiTest {
         assertThat(loggedIn.has("fullName")).isTrue();
         assertThat(loggedIn.has("expiresAt")).isTrue();
     }
+    @Test void eligibleBranchCollectionHasThePrimaryKeyRequiredByHostedMySql() throws Exception {
+        try (var connection = jdbc.getDataSource().getConnection();
+             var tables = connection.getMetaData().getTables(null, null, "%", new String[]{"TABLE"})) {
+            String table = null, schema = null, catalog = null;
+            while (tables.next()) {
+                if ("drive_branches".equalsIgnoreCase(tables.getString("TABLE_NAME"))) {
+                    table = tables.getString("TABLE_NAME");
+                    schema = tables.getString("TABLE_SCHEM");
+                    catalog = tables.getString("TABLE_CAT");
+                    break;
+                }
+            }
+            assertThat(table).as("eligible-branch table exists").isNotNull();
+            Set<String> keyColumns = new HashSet<>();
+            try (var keys = connection.getMetaData().getPrimaryKeys(catalog, schema, table)) {
+                while (keys.next()) keyColumns.add(keys.getString("COLUMN_NAME").toLowerCase(Locale.ROOT));
+            }
+            assertThat(keyColumns).containsExactlyInAnyOrder("drive_id", "branch");
+        }
+    }
     @Test void duplicateEmailAndRollAreRejectedCaseInsensitively() throws Exception {
         Account a=account("CSE","8");
         Map<String,Object> input=new HashMap<>(Map.of("fullName","Another Student","email",a.email().toUpperCase(Locale.ROOT),"password","Student@123",

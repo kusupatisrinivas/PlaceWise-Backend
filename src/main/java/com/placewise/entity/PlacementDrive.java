@@ -18,7 +18,7 @@ public class PlacementDrive {
     @Column(nullable = false) public LocalDate deadline;
     @Column(nullable = false, precision = 4, scale = 2) public BigDecimal minCgpa;
     @ElementCollection @CollectionTable(name = "drive_branches", joinColumns = @JoinColumn(name = "drive_id"))
-    @Column(name = "branch", length = 20) public Set<String> eligibleBranches = new LinkedHashSet<>();
+    @Column(name = "branch", nullable = false, length = 20) public Set<String> eligibleBranches = new LinkedHashSet<>();
     @ManyToMany @JoinTable(name = "drive_skills", joinColumns = @JoinColumn(name = "drive_id"), inverseJoinColumns = @JoinColumn(name = "skill_id"))
     public Set<Skill> requiredSkills = new LinkedHashSet<>();
     @Enumerated(EnumType.STRING) @Column(nullable = false) public JobType jobType;
